@@ -2,9 +2,13 @@ import "../globals.css";
 import {
   FaHome,
   FaSearch,
-  FaHeart,
-  FaPlay,
-  FaCompass,
+    FaHeart,
+    FaPlay,
+    FaMusic,
+    FaCompass,
+    FaVolumeUp,
+    FaFastBackward,
+    FaFastForward,
 } from "react-icons/fa";
 
 export default function Playlists() {
@@ -71,7 +75,7 @@ export default function Playlists() {
 
         <header className="top-bar">
           <div>
-            <p className="welcome">Your music 🎶</p>
+            <p className="welcome">Your music </p>
             <h2>Playlists</h2>
           </div>
 
@@ -84,7 +88,6 @@ export default function Playlists() {
           </div>
         </header>
 
-        {/* Empty playlist state */}
         <section className="empty-state playlist-empty">
           <FaPlay className="empty-play" />
 
@@ -95,14 +98,14 @@ export default function Playlists() {
           </p>
 
           <button className="create-playlist">
-            + Create Playlist
+          <a href="/discover">+ Create Playlist</a>
           </button>
         </section>
 
       </section>
       <footer className="player">
         <div className="now-playing">
-          <div className="small-cover">🎵</div>
+          <div className="small-cover"><FaMusic/></div>
 
           <div>
             <strong>Nothing playing</strong>
@@ -111,13 +114,13 @@ export default function Playlists() {
         </div>
 
         <div className="player-controls">
-          <button>⏮</button>
-          <button className="play-button">▶</button>
-          <button>⏭</button>
+          <button><FaFastBackward/></button>
+          <button className="play-button"><FaPlay/></button>
+          <button><FaFastForward/></button>
         </div>
 
         <div className="volume">
-          🔊 ━━━
+          <FaVolumeUp/>
         </div>
       </footer>
 

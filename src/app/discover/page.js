@@ -100,7 +100,14 @@ export default function Discover() {
               <h3>Chill</h3>
               <p>Relax and unwind</p>
             </div>
-
+            <div className="mood-card">
+              <h3>Sad</h3>
+              <p>Relax and unwind</p>
+            </div>
+            <div className="mood-card">
+              <h3>Tired</h3>
+              <p>Relax and sleep</p>
+            </div>
             <div className="mood-card">
               <h3>Happy</h3>
               <p>Feel-good music</p>

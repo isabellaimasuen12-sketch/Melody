@@ -9,6 +9,7 @@ import {
   FaVolumeUp,
   FaFastBackward,
   FaFastForward,
+  FaMicrophone,
 } from "react-icons/fa";
 
 export default function Artists() {
@@ -54,8 +55,8 @@ export default function Artists() {
 
         <header className="top-bar">
           <div>
-            <p className="welcome">Your music 🎤</p>
-            <h2>Artists</h2>
+            <p className="welcome">Your music </p>
+            <h2>Artists <FaMicrophone/></h2>
           </div>
 
           <div className="search-box">
@@ -68,7 +69,7 @@ export default function Artists() {
         </header>
         <section className="section">
           <div className="section-heading">
-            <h2>Your Artists</h2>
+            <h2>Your Artists </h2>
           </div>
 
           <div className="artists">

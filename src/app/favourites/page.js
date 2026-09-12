@@ -1,9 +1,13 @@
 import "../globals.css";
 import {
   FaHome,
-  FaCompass,
-  FaHeart,
-  FaPlay,
+    FaHeart,
+    FaPlay,
+    FaMusic,
+    FaCompass,
+    FaVolumeUp,
+    FaFastBackward,
+    FaFastForward,
 } from "react-icons/fa";
 
 export default function Favourites() {
@@ -82,14 +86,14 @@ export default function Favourites() {
           <p>
             Songs you add to your favourites will appear here.
           </p>
+          <button className="create-playlist"><a href="/">Add favourites</a></button>
         </section>
 
       </section>
 
-      {/* Music player */}
       <footer className="player">
         <div className="now-playing">
-          <div className="small-cover">🎵</div>
+          <div className="small-cover"><FaMusic/></div>
 
           <div>
             <strong>Nothing playing</strong>
@@ -98,13 +102,13 @@ export default function Favourites() {
         </div>
 
         <div className="player-controls">
-          <button>⏮</button>
-          <button className="play-button">▶</button>
-          <button>⏭</button>
+          <button><FaFastBackward/></button>
+          <button className="play-button"><FaPlay/></button>
+          <button><FaFastForward/></button>
         </div>
 
         <div className="volume">
-          🔊 ━━━
+          <FaVolumeUp/>
         </div>
       </footer>
 

@@ -580,6 +580,14 @@ button {
   color: #888;
   font-size: 14px;
 }
+.add a{
+  margin-top: 300px;
+  margin-bottom: 700px;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: black;
+}
 .favourites-empty {
   margin-top: 50px;
   padding: 70px 30px;

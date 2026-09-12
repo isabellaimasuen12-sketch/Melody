@@ -44,7 +44,7 @@ export default function Home() {
           <a href="/albums">Albums</a>
           <a href="/artists">Artists</a>
         </nav>
-      </aside>
+úúúúí      </aside>
       <nav className="mobile-nav">
         <a href="/">
           <FaHome />
@@ -167,8 +167,8 @@ Welcome back <MdWavingHand className="welcome-icon" />
     <FaHeart />
     </button>
   </div>
-  <h3>After Dark</h3>
-  <p>Nova</p>
+  <h3>Dynasty</h3>
+  <p>Miia</p>
 </div>
           </div>
         </section>
@@ -223,7 +223,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
           <FaPlay />
         </button>
       </div>
-      <h3>Stay</h3>
+      <h3>Diamonds</h3>
       <p>Rihanna</p>
     </div>
 
@@ -234,7 +234,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
           <FaPlay />
         </button>
       </div>
-      <h3>Someone Else</h3>
+      <h3>Arcade</h3>
       <p>Duncan Laurence</p>
     </div>
 
@@ -245,7 +245,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
           <FaPlay />
         </button>
       </div>
-      <h3>Better Days</h3>
+      <h3>Demons</h3>
       <p>Josiah</p>
     </div>
 
