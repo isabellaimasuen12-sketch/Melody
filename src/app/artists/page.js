@@ -1,9 +1,12 @@
+"use client";
 import "../globals.css";
+import React, {useState} from 'react';
 import {
   FaHome,
   FaSearch,
   FaHeart,
   FaPlay,
+  FaPause,
   FaCompass,
   FaMusic,
   FaVolumeUp,
@@ -13,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 export default function Artists() {
+  const[showPause,setShowPause]=useState(true);
   return (
     <main className="music-app">
 
@@ -120,9 +124,20 @@ export default function Artists() {
         </div>
 
         <div className="player-controls">
-          <button><FaFastForward/></button>
-          <button className="play-button"><FaPlay/></button>
-          <button><FaFastBackward/></button>
+           <div className="player-controls">
+                 <button><FaFastBackward /></button>
+                 <button className="play-button">
+                   
+                   <span
+             className="pause-icon"
+             onClick={() => setShowPause(!showPause)}
+           >
+             {showPause ? <FaPlay /> : <FaPause />}
+           </span>
+                 </button>
+                 <button><FaFastForward />
+       </button>
+               </div>
         </div>
 
         <div className="volume">

@@ -40,7 +40,6 @@ button {
   font-size: 28px;
   margin-bottom: 50px;
 }
-
 .sidebar nav {
   display: flex;
   flex-direction: column;
@@ -305,18 +304,14 @@ button {
   position: absolute;
   right: 12px;
   bottom: 12px;
-
   width: 42px;
   height: 42px;
-
   border-radius: 50%;
   background: white;
   color: #111;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   opacity: 0;
   transform: translateY(8px);
   transition: 0.2s;
@@ -562,6 +557,7 @@ button {
 
 .mood-card {
   background: white;
+  cursor: pointer; 
   padding: 25px;
   border-radius: 15px;
   transition: 0.2s;

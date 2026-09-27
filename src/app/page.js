@@ -1,9 +1,12 @@
+"use client";
 import "./globals.css";
+import React, {useState} from 'react';
 import {
   FaHome,
   FaSearch,
   FaHeart,
   FaPlay,
+  FaPause,
   FaCompass,
   FaVolumeUp,
   FaFastBackward,
@@ -13,6 +16,7 @@ import {
 import { MdWavingHand } from "react-icons/md";
 
 export default function Home() {
+  const [showPause, setShowPause] = useState(true);
   return (
     <main className="music-app">
       <aside className="sidebar">
@@ -44,7 +48,7 @@ export default function Home() {
           <a href="/albums">Albums</a>
           <a href="/artists">Artists</a>
         </nav>
-úúúúí      </aside>
+   </aside>
       <nav className="mobile-nav">
         <a href="/">
           <FaHome />
@@ -97,7 +101,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
         <section className="section">
           <div className="section-heading">
             <h2>Trending Now</h2>
-            <a href="#">See all</a>
+            <a href="/discover">See all</a>
           </div>
 
           <div className="music-grid">
@@ -175,7 +179,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
 <section className="section">
   <div className="section-heading">
     <h2>Popular Artists</h2>
-    <a href="#">See all</a>
+    <a href="/discover">See all</a>
   </div>
 
   <div className="artists">
@@ -211,7 +215,7 @@ Welcome back <MdWavingHand className="welcome-icon" />
 <section className="section">
   <div className="section-heading">
     <h2>Recommended for You</h2>
-    <a href="#">See all</a>
+    <a href="/discover">See all</a>
   </div>
 
   <div className="music-grid">
@@ -275,7 +279,15 @@ Welcome back <MdWavingHand className="welcome-icon" />
 
         <div className="player-controls">
           <button><FaFastBackward /></button>
-          <button className="play-button"><FaPlay /></button>
+          <button className="play-button">
+            
+            <span
+      className="pause-icon"
+      onClick={() => setShowPause(!showPause)}
+    >
+      {showPause ? <FaPlay /> : <FaPause />}
+    </span>
+          </button>
           <button><FaFastForward />
 </button>
         </div>
