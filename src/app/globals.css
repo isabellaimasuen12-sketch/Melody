@@ -24,7 +24,6 @@ button {
   padding-bottom: 90px;
 }
 
-
 .sidebar {
   position: fixed;
   left: 0;
@@ -62,7 +61,8 @@ button {
 
 .sidebar nav a:hover {
   color: white;
-}.search-box {
+}
+.search-box {
   width: 320px;
   height: 45px;
   display: flex;
@@ -140,6 +140,43 @@ button {
   color: white;
 }
 
+.featured div::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  width: 20%;
+  height: 20%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  to {
+    transform: translateX(100%) rotate(25deg);
+  }
+}
+.featured div::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  bottom: -40px;
+  left: -20px;
+}
+
 .featured p:first-child {
   font-size: 12px;
   letter-spacing: 2px;
@@ -164,7 +201,6 @@ button {
   color: #111;
   font-weight: bold;
 }
-
 
 .section {
   margin-top: 45px;
@@ -273,7 +309,6 @@ button {
 .artist p {
   font-size: 14px;
 }
-
 
 .player {
   position: fixed;
@@ -443,7 +478,6 @@ button {
   }
 }
 
-
 @media (max-width: 900px) {
   .sidebar {
     width: 180px;
@@ -473,7 +507,6 @@ button {
     padding-bottom: 10px;
   }
 }
-
 
 @media (max-width: 600px) {
   .sidebar {
@@ -557,7 +590,7 @@ button {
 
 .mood-card {
   background: white;
-  cursor: pointer; 
+  cursor: pointer;
   padding: 25px;
   border-radius: 15px;
   transition: 0.2s;
@@ -576,7 +609,7 @@ button {
   color: #888;
   font-size: 14px;
 }
-.add a{
+.add a {
   margin-top: 300px;
   margin-bottom: 700px;
   color: white;
