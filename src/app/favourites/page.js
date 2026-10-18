@@ -1,20 +1,41 @@
 "use client";
 import "../globals.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaHome,
-    FaHeart,
-    FaPlay,
-    FaPause,
-    FaMusic,
-    FaCompass,
-    FaVolumeUp,
-    FaFastBackward,
-    FaFastForward,
+  FaHeart,
+  FaPlay,
+  FaMusic,
+  FaCompass,
+  FaVolumeUp,
+  FaFastBackward,
+  FaFastForward,
 } from "react-icons/fa";
 
 export default function Favourites() {
-  const[showPause,setShowPause]=useState(true);
+  const [favourites, setFavourites] = useState([]);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("favourites") || "[]");
+      setFavourites(saved);
+    } catch (error) {
+      console.error("Could not load favourites:", error);
+    }
+  }, []);
+
+  const removeFav = (song) => {
+    const updated = favourites.filter(
+      (f) => !(f.title === song.title && f.artist === song.artist)
+    );
+    setFavourites(updated);
+    try {
+      localStorage.setItem("favourites", JSON.stringify(updated));
+    } catch (error) {
+      console.error("Could not save favourites:", error);
+    }
+  };
+
   return (
     <main className="music-app">
       <aside className="sidebar">
@@ -52,6 +73,7 @@ export default function Favourites() {
           <a href="/artists">Artists</a>
         </nav>
       </aside>
+
       <nav className="mobile-nav">
         <a href="/">
           <FaHome />
@@ -72,9 +94,9 @@ export default function Favourites() {
           <FaPlay />
           <span>Playlists</span>
         </a>
-      </nav>  
-      <section className="content">
+      </nav>
 
+      <section className="content">
         <header className="top-bar">
           <div>
             <p className="welcome">Your collection </p>
@@ -82,49 +104,71 @@ export default function Favourites() {
           </div>
         </header>
 
-        <section className="empty-state favourites-empty">
-          <FaHeart className="empty-heart" />
+        {favourites.length === 0 ? (
+          <section className="empty-state favourites-empty">
+            <FaHeart className="empty-heart" />
 
-          <h2>No favourite songs yet</h2>
+            <h2>No favourite songs yet</h2>
 
-          <p>
-            Songs you add to your favourites will appear here.
-          </p>
-          <button className="create-playlist"><a href="/">Add favourites</a></button>
-        </section>
+            <p>Songs you add to your favourites will appear here.</p>
+            <button className="create-playlist">
+              <a href="/">Add favourites</a>
+            </button>
+          </section>
+        ) : (
+          <section className="section">
+            <div className="music-grid">
+              {favourites.map((song) => (
+                <div className="music-card" key={song.title + song.artist}>
+                  <div className="cover">
+                    <img src={song.img} alt={`${song.title} by ${song.artist}`} />
 
+                    <button
+                      className="like-button"
+                      style={{ color: "red" }}
+                      onClick={() => removeFav(song)}
+                    >
+                      <FaHeart />
+                    </button>
+                  </div>
+
+                  <h3>{song.title}</h3>
+                  <p>{song.artist}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </section>
 
       <footer className="player">
         <div className="now-playing">
-          <div className="small-cover"><FaMusic/></div>
+          <div className="small-cover">
+            <FaMusic />
+          </div>
 
           <div>
             <strong>Nothing playing</strong>
-            <p>Select a song to start listening</p>
+            <p>Play songs from the Home page</p>
           </div>
         </div>
 
-           <div className="player-controls">
-                 <button><FaFastBackward /></button>
-                 <button className="play-button">
-                   
-                   <span
-             className="pause-icon"
-             onClick={() => setShowPause(!showPause)}
-           >
-             {showPause ? <FaPlay /> : <FaPause />}
-           </span>
-                 </button>
-                 <button><FaFastForward />
-       </button>
-               </div>
+        <div className="player-controls">
+          <button>
+            <FaFastBackward />
+          </button>
+          <button className="play-button">
+            <FaPlay />
+          </button>
+          <button>
+            <FaFastForward />
+          </button>
+        </div>
 
         <div className="volume">
-          <FaVolumeUp/>
+          <FaVolumeUp />
         </div>
       </footer>
-
     </main>
   );
 }

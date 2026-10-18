@@ -1,6 +1,7 @@
 "use client";
 import "./globals.css";
-import React, { useState, useRef } from "react";import {
+import React, { useState, useRef,useEffect} from "react";
+import {
   FaHome,
   FaSearch,
   FaHeart,
@@ -36,8 +37,15 @@ const popularArtists = [
   { name: "Miia", img: "/images.jpg" },
 ];
 
-function SongCard({ title, artist, img, showLike, onPlay }) {
-  return (
+function SongCard({
+  title,
+  artist,
+  img,
+  showLike,
+  onPlay,
+  onLike,
+  isFavourite,
+}) {  return (
     <div className="music-card">
       <div className="cover">
         <img src={img} alt={`${title} by ${artist}`} />
@@ -47,10 +55,15 @@ function SongCard({ title, artist, img, showLike, onPlay }) {
         </button>
 
         {showLike && (
-          <button className="like-button">
-            <FaHeart />
-          </button>
-        )}
+  <button
+    className="like-button"
+    onClick={onLike}
+    style={{ color: isFavourite ? "red" : undefined }}
+    aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+  >
+    <FaHeart />
+  </button>
+)}
       </div>
 
       <h3>{title}</h3>
@@ -69,6 +82,8 @@ export default function Home() {
   const audioRef = useRef(null);
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playQueue, setPlayQueue] = useState([]);
+const [currentIndex, setCurrentIndex] = useState(-1);
 
   
   const handleSearch = async (e) => {
@@ -105,47 +120,117 @@ export default function Home() {
   };
 
   // Works with a search result (has previewUrl) OR just a title + artist
-  const playTrack = async ({ title, artist, previewUrl }) => {
+  
+  const playTrack = async (track, queue = searchResults) => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const key = previewUrl || `${title}-${artist}`;
+  
+    const title = track.trackName || track.title;
+    const artist = track.artistName || track.artist;
+    const key = track.trackId || track.previewUrl || `${title}-${artist}`;
+  
     if (current?.key === key) {
       togglePlay();
       return;
     }
-
-    let url = previewUrl;
+  
+    const safeQueue = queue.length ? queue : [track];
+  
+    const index = safeQueue.findIndex((item) =>
+      track.trackId
+        ? item.trackId === track.trackId
+        : (item.trackName || item.title) === title &&
+          (item.artistName || item.artist) === artist
+    );
+  
+    let url = track.previewUrl;
     let info = { title, artist };
-
+  
     if (!url) {
       try {
-        const res = await fetch(
-          `https://itunes.apple.com/search?term=${encodeURIComponent(`${title} ${artist}`)}&entity=song&limit=10`
+        const response = await fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(
+            `${title} ${artist}`
+          )}&entity=song&limit=10`
         );
-        const data = await res.json();
-        const match = (data.results || []).find((s) => s.previewUrl);
+  
+        const data = await response.json();
+        const match = (data.results || []).find((song) => song.previewUrl);
+  
         if (!match) {
           alert("No preview available for this song");
           return;
         }
+  
         url = match.previewUrl;
-        info = { title: match.trackName, artist: match.artistName };
+        info = {
+          title: match.trackName,
+          artist: match.artistName,
+        };
       } catch (error) {
         alert("Could not load this song");
         return;
       }
     }
-
+  
     audio.src = url;
+  
     try {
       await audio.play();
       setCurrent({ key, ...info });
+      setPlayQueue(safeQueue);
+      setCurrentIndex(index >= 0 ? index : 0);
     } catch (error) {
       console.error("Playback error:", error);
     }
   };
+  
+  const playNext = () => {
+    if (playQueue.length === 0) return;
+  
+    const nextIndex = (currentIndex + 1) % playQueue.length;
+    playTrack(playQueue[nextIndex], playQueue);
+  };
+  
+  const playPrevious = () => {
+    if (playQueue.length === 0) return;
+  
+    const previousIndex =
+      (currentIndex - 1 + playQueue.length) % playQueue.length;
+  
+    playTrack(playQueue[previousIndex], playQueue);
+  };
+  
+  const [favourites, setFavourites] = useState([]);
 
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("favourites") || "[]");
+      setFavourites(saved);
+    } catch (error) {
+      console.error("Could not load favourites:", error);
+    }
+  }, []);
+  
+  const toggleFavourite = (song) => {
+    const exists = favourites.some(
+      (f) => f.title === song.title && f.artist === song.artist
+    );
+  
+    const updated = exists
+      ? favourites.filter(
+          (f) => !(f.title === song.title && f.artist === song.artist)
+        )
+      : [...favourites, song];
+  
+    setFavourites(updated);
+  
+    try {
+      localStorage.setItem("favourites", JSON.stringify(updated));
+    } catch (error) {
+      console.error("Could not save favourites:", error);
+    }
+  };
   return (
     <main className="music-app">
       <aside className="sidebar">
@@ -232,13 +317,7 @@ export default function Home() {
                   title={song.trackName}
                   artist={song.artistName}
                   img={song.artworkUrl100}
-                  onPlay={() =>
-                    playTrack({
-                      title: song.trackName,
-                      artist: song.artistName,
-                      previewUrl: song.previewUrl,
-                    })
-                  }
+                  onPlay={() => playTrack(song, searchResults)}
                 />
               ))}
             </div>
@@ -322,7 +401,11 @@ export default function Home() {
                 key={s.title + s.artist}
                 {...s}
                 showLike
-                onPlay={() => playTrack({ title: s.title, artist: s.artist })}
+                onPlay={() => playTrack(s, trending)}
+                onLike={() => toggleFavourite(s)}
+                isFavourite={favourites.some(
+                  (f) => f.title === s.title && f.artist === s.artist
+                )}
               />
             ))}
           </div>
@@ -353,13 +436,18 @@ export default function Home() {
           </div>
 
           <div className="music-grid">
-            {recommended.map((s) => (
-              <SongCard
-                key={s.title + s.artist}
-                {...s}
-                onPlay={() => playTrack({ title: s.title, artist: s.artist })}
-              />
-            ))}
+          {recommended.map((s) => (
+  <SongCard
+    key={s.title + s.artist}
+    {...s}
+    showLike
+    isFavourite={favourites.some(
+      (f) => f.title === s.title && f.artist === s.artist
+    )}
+    onLike={() => toggleFavourite(s)}
+    onPlay={() => playTrack(s, recommended)}
+  />
+))}
           </div>
         </section>
       </section>
@@ -368,8 +456,13 @@ export default function Home() {
         ref={audioRef}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-      />
+        onEnded={() => {
+          if (playQueue.length > 1) {
+            playNext();
+          } else {
+            setIsPlaying(false);
+          }
+        }}      />
 
       <footer className="player">
         <div className="now-playing">
@@ -383,16 +476,18 @@ export default function Home() {
         </div>
 
         <div className="player-controls">
-          <button>
-            <FaFastBackward />
-          </button>
-          <button className="play-button" onClick={togglePlay}>
-            {isPlaying ? <FaPause /> : <FaPlay />}
-          </button>
-          <button>
-            <FaFastForward />
-          </button>
-        </div>
+  <button onClick={playPrevious} aria-label="Previous song">
+    <FaFastBackward />
+  </button>
+
+  <button className="play-button" onClick={togglePlay}>
+    {isPlaying ? <FaPause /> : <FaPlay />}
+  </button>
+
+  <button onClick={playNext} aria-label="Next song">
+    <FaFastForward />
+  </button>
+</div>
 
         <div className="volume">
           <FaVolumeUp />
