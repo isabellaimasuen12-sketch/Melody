@@ -14,7 +14,7 @@ export default function Artists() {
   const [heading, setHeading] = useState("Popular Artists");
 
   useEffect(() => {
-    fetch("https://rss.applemarketingtools.com/api/v2/us/music/most-played/25/songs.json")
+    fetch("/api/chart?kind=songs&limit=25")
       .then((r) => r.json())
       .then((d) => setArtists(unique(d.feed.results.map((s) => ({ artist: s.artistName, img: big(s.artworkUrl100) }))).slice(0, 12)))
       .catch(() => {});

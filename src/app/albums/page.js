@@ -12,7 +12,7 @@ export default function Albums() {
   const [heading, setHeading] = useState("Popular Albums");
 
   useEffect(() => {
-    fetch("https://rss.applemarketingtools.com/api/v2/us/music/most-played/12/albums.json")
+    fetch("/api/chart?kind=albums&limit=12")
       .then((r) => r.json())
       .then((d) => setAlbums(d.feed.results.map((a) => ({ id: a.id, title: a.name, artist: a.artistName, img: big(a.artworkUrl100) }))))
       .catch(() => {});
