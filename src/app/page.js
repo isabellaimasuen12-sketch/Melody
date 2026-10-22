@@ -242,18 +242,12 @@ const [currentIndex, setCurrentIndex] = useState(-1);
             <FaHome />
             Home
           </a>
-          <a href="/discover">
-            <FaCompass />
-            Discover
-          </a>
+
           <a href="/favourites">
             <FaHeart />
             Favourites
           </a>
-          <a href="/playlists">
-            <FaPlay />
-            Playlists
-          </a>
+
         </nav>
 
         <nav>
