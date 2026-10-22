@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FaHome, FaSearch, FaHeart, FaPlay, FaPause, FaCompass, FaVolumeUp, FaFastBackward, FaFastForward, FaMusic } from "react-icons/fa";
 import { usePlayer } from "./PlayerContext";
 
-const menu = [["/", "Home", FaHome], ["/discover", "Discover", FaCompass], ["/favourites", "Favourites", FaHeart], ["/playlists", "Playlists", FaPlay]];
+const menu = [["/", "Home", FaHome],  ["/favourites", "Favourites", FaHeart]];
 const library = [["/recently-played", "Recently Played"], ["/albums", "Albums"], ["/artists", "Artists"]];
 
 export function Card({ title, artist, img, onPlay, liked, onLike }) {
