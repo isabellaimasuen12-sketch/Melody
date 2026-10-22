@@ -1,191 +1,54 @@
 "use client";
-import "../globals.css";
-import React, {useState} from 'react';
-import {
-  FaHome,
-    FaSearch,
-    FaHeart,
-    FaPlay,
-    FaPause,
-    FaCompass,
-    FaVolumeUp,
-    FaFastBackward,
-    FaFastForward,
-} from "react-icons/fa";
+import { useEffect, useState } from "react";
+import Shell, { Card, TopBar, SearchBox } from "../Shell";
+import { usePlayer } from "../PlayerContext";
+
+const big = (u) => u.replace("100x100", "300x300");
 
 export default function Albums() {
-  const [showPause,setShowPause]=useState(true);
+  const { playTrack } = usePlayer();
+  const [albums, setAlbums] = useState([]);
+  const [q, setQ] = useState("");
+  const [heading, setHeading] = useState("Popular Albums");
+
+  useEffect(() => {
+    fetch("https://rss.applemarketingtools.com/api/v2/us/music/most-played/12/albums.json")
+      .then((r) => r.json())
+      .then((d) => setAlbums(d.feed.results.map((a) => ({ id: a.id, title: a.name, artist: a.artistName, img: big(a.artworkUrl100) }))))
+      .catch(() => {});
+  }, []);
+
+  const search = async (e) => {
+    if (e.key !== "Enter" || !q.trim()) return;
+    try {
+      const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=album&limit=12`);
+      const d = await r.json();
+      setAlbums((d.results || []).map((a) => ({ id: a.collectionId, title: a.collectionName, artist: a.artistName, img: big(a.artworkUrl100) })));
+      setHeading(`Results for "${q}"`);
+    } catch (error) { console.error("Album search error:", error); }
+  };
+
+  // Plays the whole album (30-second previews) as a queue
+  const playAlbum = async (id) => {
+    try {
+      const r = await fetch(`https://itunes.apple.com/lookup?id=${id}&entity=song`);
+      const tracks = ((await r.json()).results || []).filter((t) => t.previewUrl);
+      if (tracks.length) playTrack(tracks[0], tracks);
+      else alert("No previews available for this album");
+    } catch { alert("Could not load this album"); }
+  };
+
   return (
-    <main className="music-app">
-      <aside className="sidebar">
-        <h1 className="logo">Melody</h1>
-
-        <nav>
-          <p className="nav-title">MENU</p>
-
-          <a href="/">
-            <FaHome />
-            Home
-          </a>
-
-          <a href="/discover">
-            <FaCompass />
-            Discover
-          </a>
-
-          <a href="/favourites">
-            <FaHeart />
-            Favourites
-          </a>
-
-          <a href="/playlists">
-            <FaPlay />
-            Playlists
-          </a>
-        </nav>
-
-        <nav>
-          <p className="nav-title">YOUR LIBRARY</p>
-
-          <a href="/recently-played">Recently Played</a>
-          <a href="/albums">Albums</a>
-          <a href="/artists">Artists</a>
-        </nav>
-      </aside>
-      <nav className="mobile-nav">
-        <a href="/">
-          <FaHome />
-          <span>Home</span>
-        </a>
-
-        <a href="/discover">
-          <FaCompass />
-          <span>Discover</span>
-        </a>
-
-        <a href="/favourites">
-          <FaHeart />
-          <span>Favourites</span>
-        </a>
-
-        <a href="/playlists">
-          <FaPlay />
-          <span>Playlists</span>
-        </a>
-      </nav>  
-      <section className="content">
-
-        <header className="top-bar">
-          <div>
-            <p className="welcome">Your collection </p>
-            <h2>Albums</h2>
-          </div>
-
-          <div className="search-box">
-            <FaSearch />
-            <input
-              type="text"
-              placeholder="Search for albums..."
-            />
-          </div>
-        </header>
-        <section className="section">
-          <div className="section-heading">
-            <h2>Your Albums</h2>
-          </div>
-
-          <div className="music-grid">
-
-            <div className="music-card">
-              <div className="cover">
-                <img src="/Rihanna.jpg" alt="Rihanna album" />
-
-                <button className="cover-play">
-                  <FaPlay />
-                </button>
-              </div>
-
-              <h3>Umbrella</h3>
-              <p>Rihanna</p>
-            </div>
-
-            <div className="music-card">
-              <div className="cover">
-                <img
-                  src="/duncan laurence.jpg"
-                  alt="Duncan Laurence album"
-                />
-
-                <button className="cover-play">
-                  <FaPlay />
-                </button>
-              </div>
-
-              <h3>Arcade</h3>
-              <p>Duncan Laurence</p>
-            </div>
-
-            <div className="music-card">
-              <div className="cover">
-                <img src="/Josiah.jpg" alt="Josiah album" />
-
-                <button className="cover-play">
-                  <FaPlay />
-                </button>
-              </div>
-
-              <h3>Golden Hour</h3>
-              <p>Josiah</p>
-            </div>
-
-            <div className="music-card">
-              <div className="cover">
-                <img src="/images.jpg" alt="Nova album" />
-
-                <button className="cover-play">
-                  <FaPlay />
-                </button>
-              </div>
-
-              <h3>After Dark</h3>
-              <p>Nova</p>
-            </div>
-
-          </div>
-        </section>
-
+    <Shell>
+      <TopBar label="Your collection" title="Albums">
+        <SearchBox placeholder="Search for albums... (press Enter)" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={search} />
+      </TopBar>
+      <section className="section">
+        <div className="section-heading"><h2>{heading}</h2></div>
+        <div className="music-grid">
+          {albums.map((a) => <Card key={a.id} title={a.title} artist={a.artist} img={a.img} onPlay={() => playAlbum(a.id)} />)}
+        </div>
       </section>
-
-      <footer className="player">
-        <div className="now-playing">
-          <div className="small-cover"><FaPlay/></div>
-
-          <div>
-            <strong>Nothing playing</strong>
-            <p>Select a song to start listening</p>
-          </div>
-        </div>
-
-      <div className="player-controls">
-              <button><FaFastBackward /></button>
-              <button className="play-button">
-                
-                <span
-          className="pause-icon"
-          onClick={() => setShowPause(!showPause)}
-        >
-          {showPause ? <FaPlay /> : <FaPause />}
-        </span>
-              </button>
-              <button><FaFastForward />
-    </button>
-            </div>
-
-        <div className="volume">
-          <FaVolumeUp/>
-        </div>
-      </footer>
-
-    </main>
+    </Shell>
   );
 }
